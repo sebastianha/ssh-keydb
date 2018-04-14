@@ -1,0 +1,14 @@
+{
+  "name": "ssh-keydb",
+  "version": "0.1.0",
+  "description": "",
+  "main": "ssh-keydb.js",
+  "scripts": {},
+  "author": "Sebastian Hammerl",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.15.1",
+    "iprange": "^0.1.0",
+    "ssh2": "^0.6.0"
+  }
+}
