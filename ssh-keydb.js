@@ -5,18 +5,25 @@ var iprange = require("iprange");
 var Client  = require("ssh2").Client;
 
 program
-  .version("0.1.0")
-  .option("-r, --range <ip/netmask>", "(required) IP Range to test")
-  .option("-p, --parallel <number>",  "(optional) Run <number> tests in parallel, default is \"1\"")
-  .option("-f, --file <file name>",   "(optional) File name for key db, default is keydb.json")
-  .option("-u, --user <user name>",   "(optional) User name for log in, default is \"root\"")
-  .option("-t, --timeout <ms>",       "(optional) Timeout for handshake in ms, default is \"20000\"")
+  .version("0.2.0")
+  .option("-r, --range <ip/netmask>",    "(required) IP Range to test")
+  .option("-H, --hostsfile <file name>", "(optional) File with host names per line")
+  .option("-p, --parallel <number>",     "(optional) Run <number> tests in parallel, default is \"1\"")
+  .option("-f, --file <file name>",      "(optional) File name for key db, default is keydb.json")
+  .option("-u, --user <user name>",      "(optional) User name for log in, default is \"root\"")
+  .option("-t, --timeout <ms>",          "(optional) Timeout for handshake in ms, default is \"20000\"")
   .parse(process.argv);
 
-if(!program.range) {
+if(!program.range && !program.hostsfile) {
 	program.help();
 }
-var hosts = iprange(program.range);
+
+var hosts;
+if(program.hostsfile) {
+	hosts = fs.readFileSync(program.hostsfile).toString().split("\n");
+} else {
+	hosts = iprange(program.range);
+}
 
 var keyDBLock = false; // Lock for keydb file, needed when running in parallel
 // Process authorized_keys file retrieved from server

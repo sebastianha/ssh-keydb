@@ -9,13 +9,14 @@ Usage: ssh-keydb [options]
 
   Options:
 
-    -V, --version             output the version number
-    -r, --range <ip/netmask>  (required) IP Range to test
-    -p, --parallel <number>   (optional) Run <number> tests in parallel, default is "1"
-    -f, --file <file name>    (optional) File name for key db, default is keydb.json
-    -u, --user <user name>    (optional) User name for log in, default is "root"
-    -t, --timeout <ms>        (optional) Timeout for handshake in ms, default is "20000"
-    -h, --help                output usage information
+    -V, --version               output the version number
+    -r, --range <ip/netmask>    (required) IP Range to test
+    -H, --hostsfile <file name> (optional) File with host names per line
+    -p, --parallel <number>     (optional) Run <number> tests in parallel, default is "1"
+    -f, --file <file name>      (optional) File name for key db, default is keydb.json
+    -u, --user <user name>      (optional) User name for log in, default is "root"
+    -t, --timeout <ms>          (optional) Timeout for handshake in ms, default is "20000"
+    -h, --help                  output usage information
 ```
 
 Example:
