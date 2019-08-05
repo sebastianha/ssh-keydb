@@ -67,6 +67,12 @@ cat keydb.json  | jq '.'
 cat keydb.json  | jq '.[] | {name: .comment, servers: .servers|length}' | jq --slurp '.|sort_by(.servers)|reverse'
 ```
 
+Get authorized_keys files from a lists of hosts
+
+```
+for i in `cat hosts`; do echo $i; ! test -f ./ak/${i} && scp root@${i}:/root/.ssh/authorized_keys ./ak/$i; done
+```
+
 # License
 
 MIT license, have fun!
