@@ -5,24 +5,32 @@ var iprange = require("iprange");
 var Client  = require("ssh2").Client;
 
 program
-  .version("0.2.0")
-  .option("-r, --range <ip/netmask>",    "(required) IP Range to test")
-  .option("-H, --hostsfile <file name>", "(optional) File with host names per line")
-  .option("-p, --parallel <number>",     "(optional) Run <number> tests in parallel, default is \"1\"")
-  .option("-f, --file <file name>",      "(optional) File name for key db, default is keydb.json")
-  .option("-u, --user <user name>",      "(optional) User name for log in, default is \"root\"")
-  .option("-t, --timeout <ms>",          "(optional) Timeout for handshake in ms, default is \"20000\"")
+  .version("0.3.0")
+  .option("-r, --range <ip/netmask>",      "(required) IP Range to test")
+  .option("-H, --hostsfile <file name>",   "(optional) File with host names per line")
+  .option("-a, --authfiles <folder name>", "(optional) Timeout for handshake in ms, default is \"20000\"")
+  .option("-p, --parallel <number>",       "(optional) Run <number> tests in parallel, default is \"1\"")
+  .option("-f, --file <file name>",        "(optional) File name for key db, default is keydb.json")
+  .option("-u, --user <user name>",        "(optional) User name for log in, default is \"root\"")
+  .option("-t, --timeout <ms>",            "(optional) Timeout for handshake in ms, default is \"20000\"")
   .parse(process.argv);
 
-if(!program.range && !program.hostsfile) {
+if(!program.range && !program.hostsfile && !program.authfiles) {
 	program.help();
 }
 
 var hosts;
-if(program.hostsfile) {
-	hosts = fs.readFileSync(program.hostsfile).toString().split("\n");
+if(program.authfiles) {
+	hosts = [];
+	fs.readdirSync(program.authfiles).forEach(function(file) {
+		hosts.push(file);
+	});
 } else {
-	hosts = iprange(program.range);
+	if(program.hostsfile) {
+		hosts = fs.readFileSync(program.hostsfile).toString().split("\n");
+	} else {
+		hosts = iprange(program.range);
+	}
 }
 
 var keyDBLock = false; // Lock for keydb file, needed when running in parallel
@@ -153,10 +161,16 @@ var nextHost = function() {
 	if(hosts.length === 0) {
 		return;
 	}
-	testHost(hosts.shift(), showSuccess, showError);
+	if(program.authfiles) {
+		var host = hosts.shift();
+		processKeys(host, fs.readFileSync(program.authfiles + "/" + host).toString(), showSuccess);
+	} else {
+		testHost(hosts.shift(), showSuccess, showError);
+	}
 }
 
 var parallel = parseInt(program.parallel) || 1;
 for(var i=0; i<parallel; i++) {
 	nextHost();
 }
+
