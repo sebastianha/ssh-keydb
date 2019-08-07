@@ -5,7 +5,7 @@ var iprange = require("iprange");
 var Client  = require("ssh2").Client;
 
 program
-  .version("0.3.0")
+  .version("0.4.0")
   .option("-r, --range <ip/netmask>",      "(required) IP Range to test")
   .option("-H, --hostsfile <file name>",   "(optional) File with host names per line")
   .option("-a, --authfiles <folder name>", "(optional) Timeout for handshake in ms, default is \"20000\"")
@@ -73,18 +73,23 @@ var processKeys = function(host, keys, success) {
 			var type = keyLine.shift();
 			var key = keyLine.shift();
 			var comment = keyLine.join(" ");
+			var comments = [keyLine.join(" ")];
 
 			// If key not in keydb yet, create it. Otherwise add host to servers
 			if(keyDB[key] === undefined) {
 				keyDB[key] = {
 					type   : type,
 					comment: comment,
+					comments: comments,
 					servers: [
 						host
 					]
 				}
 			} else if(keyDB[key].servers.indexOf(host) === -1) {
 				keyDB[key].servers.push(host);
+				if(keyDB[key].comments.indexOf(comment) === -1) {
+					keyDB[key].comments.push(comment);
+				}
 			}
 		}
 	}

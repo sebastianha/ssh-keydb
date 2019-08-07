@@ -33,6 +33,9 @@ Example:
 
 # Reduce timeout for faster testing
 ./ssh-keydb.js -r 192.168.232.0/24 -p 100 -t 5000
+
+# Read directory with authorized_keys files
+./ssh-keydb.js -a ak/
 ```
 
 # Results
@@ -44,6 +47,7 @@ The result is a JSON file in the following format:
 "AAAAABBBBBCCCCC(ssh public key)": {
     "type": "ssh-rsa",
     "comment": "user@machine",
+    "comments": ["user@machine", "other-comment-of-same-key@machine"]
     "servers": [
       "192.168.232.1",
       "192.168.232.2",
@@ -65,6 +69,9 @@ cat keydb.json  | jq '.'
 
 # Show number of servers per key and sort
 cat keydb.json  | jq '.[] | {name: .comment, servers: .servers|length}' | jq --slurp '.|sort_by(.servers)|reverse'
+
+# With all variations of comments
+cat keydb.json  | jq '.[] | {names: .comments | join(" | "), servers: .servers|length}' | jq --slurp '.|sort_by(.servers)|reverse'
 ```
 
 Get authorized_keys files from a lists of hosts
