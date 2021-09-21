@@ -9,6 +9,6 @@
   "dependencies": {
     "commander": "^2.15.1",
     "iprange": "^0.1.0",
-    "ssh2": "^0.6.0"
+    "ssh2": "^1.4.0"
   }
 }
